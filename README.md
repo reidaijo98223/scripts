@@ -382,6 +382,89 @@ OK: All scanned partitions are below 75% capacity.
 
 ---
 
+# PROD Elastic Beats Service Checker & Automated Auto-Restarter
+
+This Bash script provides automated monitoring, health validation, and self-healing remediation for Elastic Beats engines across target infrastructure hosts. 
+
+## ⚙️ Core Logic Flow
+
+```text
+[Start Engine Check] ➔ Load Production Server List ➔ Batch SSH Process Check (pgrep)
+│
+┌─────────────────────────┴────────────────────────┐
+▼                                                  ▼
+[SSH Status = 0 (Success)]                         [SSH Status = 255 (Failure)]
+Evaluate: Metricbeat, Filebeat, & Heartbeat        Log Connection Timeout Exception
+│                       │                          │
+▼ (All Processes OK)    ▼ (Any Process Down)       ▼
+Log Active PIDs         Queue Target Host          Skip Restart Workflow
+│                       │                          │
+│                       ▼                          │
+│                       Execute Remotely:          │
+│                       `sudo -iu <beat> start.sh` │
+│                       │                          │
+└───────────────────────┼──────────────────────────┘
+                        ▼
+          [Format & Mail Summary Report]
+```
+
+## 🚀 Key Features
+
+* **Parallel Process Inspection:** Executes a single combined SSH connection per server to check Metricbeat, Filebeat, and Heartbeat simultaneously, significantly reducing execution overhead and network chatter.
+* **Automated Self-Healing:** Instantly isolates down processes and triggers specialized, non-root user remote context application starts (`sudo -iu <service_user>`).
+* **Log Rotation Management:** Automatically monitors run histories and clips logs down using size-based threshold optimization rules (`+3MB`).
+* **Cross-Platform Mail Alerts:** Standardizes generated failure attachments with target Windows line-ending formatting (`CRLF`) before blasting system notifications via `mail`.
+
+## 📁 System Requirements & Directories
+
+The system searches and manages internal state indicators within these localized structures:
+
+* **Base Path:** `$HOME/cxp_exponow_menu_jumpserver/servicechecks/beats/prod`
+* **Inventory Host List:** `inventory/prod-server-list.txt` (newline separated server strings)
+* **Temporary Storage File:** `temp/failed-exponow-prod-beats-report.txt`
+* **Append Execution Log:** `log/beats-prod-servicechecks-run-history`
+
+## 🛠️ Usage Instructions
+
+### 1. Configure the Target Inventory
+Populate your environment destinations inside your inventory file structure:
+```bash
+cat << 'EOF' > ~/cxp_exponow_menu_jumpserver/servicechecks/beats/prod/inventory/prod-server-list.txt
+prod-app-server-01.domain.lan
+prod-app-server-02.domain.lan
+EOF
+```
+
+### 2. Execution Run
+Ensure executable permissions are granted and trigger the check engine directly or via systematic Cron schedules:
+```bash
+chmod +x check_beats.sh
+./check_beats.sh
+```
+## ⏰ Automated Scheduling (Crontab)
+
+To ensure high availability, configure the script to execute automatically every **5 minutes** using the system cron daemon. 
+
+### 1. Open the Crontab Editor
+Log into the jump server as the deployment user and access your user schedule:
+```bash
+crontab -e
+```
+
+### 2. Append the Cron Entry
+Add the following line at the bottom of the file. This profile handles explicit paths and pipes console standard errors straight into your localized history log:
+
+```text
+*/5 * * * * /bin/bash \(HOME/cxp_exponow_menu_jumpserver/servicechecks/beats/prod/check_beats.sh >>\)HOME/cxp_exponow_menu_jumpserver/servicechecks/beats/prod/log/beats-prod-servicechecks-run-history 2>&1
+```
+
+### 3. Verify Active Engine Schedules
+Confirm your automated check rule is active inside your profile engine:
+```bash
+crontab -l
+```
+---
+
 
 
 
