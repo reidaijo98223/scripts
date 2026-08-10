@@ -419,7 +419,7 @@ Log Active PIDs         Queue Target Host          Skip Restart Workflow
 
 The system searches and manages internal state indicators within these localized structures:
 
-* **Base Path:** `$HOME/cxp_exponow_menu_jumpserver/servicechecks/beats/prod`
+* **Base Path:** `$HOME/abc_expnow_menu_jumpserver/servicechecks/beats/prod`
 * **Inventory Host List:** `inventory/prod-server-list.txt` (newline separated server strings)
 * **Temporary Storage File:** `temp/failed-exponow-prod-beats-report.txt`
 * **Append Execution Log:** `log/beats-prod-servicechecks-run-history`
@@ -429,7 +429,7 @@ The system searches and manages internal state indicators within these localized
 ### 1. Configure the Target Inventory
 Populate your environment destinations inside your inventory file structure:
 ```bash
-cat << 'EOF' > ~/cxp_exponow_menu_jumpserver/servicechecks/beats/prod/inventory/prod-server-list.txt
+cat << 'EOF' > ~/abc_expnow_menu_jumpserver/servicechecks/beats/prod/inventory/prod-server-list.txt
 prod-app-server-01.domain.lan
 prod-app-server-02.domain.lan
 EOF
@@ -455,7 +455,7 @@ crontab -e
 Add the following line at the bottom of the file. This profile handles explicit paths and pipes console standard errors straight into your localized history log:
 
 ```text
-*/5 * * * * /bin/bash \(HOME/cxp_exponow_menu_jumpserver/servicechecks/beats/prod/check_beats.sh >>\)HOME/cxp_exponow_menu_jumpserver/servicechecks/beats/prod/log/beats-prod-servicechecks-run-history 2>&1
+*/5 * * * * /bin/bash \(HOME/abc_expnow_menu_jumpserver/servicechecks/beats/prod/check_beats.sh >>\)HOME/abc_expnow_menu_jumpserver/servicechecks/beats/prod/log/beats-prod-servicechecks-run-history 2>&1
 ```
 
 ### 3. Verify Active Engine Schedules
