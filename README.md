@@ -146,4 +146,98 @@ chmod +x apache_monitor.sh
 
 ---
 
+# Production Application Webcheck & Alerting Engine
+
+A production-ready Bash monitoring script designed to perform multi-stage health checks on application endpoints and VIP URLs. It evaluates both the HTTP response status code and response payload regex validation while implementing smart rate-limiting logic to prevent alert spamming.
+
+---
+
+## 🚀 Features
+
+* **Dual-Stage Content Verification** – Verifies that endpoints return an `HTTP 200 OK` status and checks response bodies against specific text strings using regex patterns.
+* **Intelligent Anti-Spam Logic** – Utilizes a sliding time-window matrix file counter to ensure failures must breach 3 distinct validation drops over a rolling 15-minute timeframe before an alert fires.
+* **Dual-Channel Alerting** – Simulates operational updates by building dynamic payload bodies distributed across both Email (`mailx`) digests and **Microsoft Teams Incoming Webhooks**.
+* **Automated Failure Debouncing** – Suppresses recurring notifications via internal local state tracking tags once an active error condition has been successfully broadcast.
+* **Self-Healing State & Recovery Notification** – Tracks down states silently using persistent flag boundaries, automatically dispatching a **Recovery Email** and clearing counters once endpoints return to a healthy status.
+* **Autonomous Log Management** – Prunes background execution records continuously, truncating history tracking files to 0 blocks once they exceed `3MB` in footprint size.
+
+---
+
+## 📋 Operational Lifecycle Architecture
+
+[Start Script Sweep] ➔ Load URL Target Lists ➔ Execute curl HTTP & Body Checks
+│
+┌─────────────────────────┴────────────────────────┐
+▼                                                  ▼
+[Validation = OK]                                  [Validation = Failed]
+Does .status Flag Exist?                           Has Failure Limit Been Met? (3 Drops / 15 mins)
+│                       │                          │
+▼ (No)                  ▼ (Yes)                    ▼ (No)                   ▼ (Yes)
+[Process Finished]      [Send Recovery Email]      [Log Counter State]      Is State File Active?
+                        │                                                   │                  │
+                        ▼                                                   ▼ (Yes)            ▼ (No)
+                        [Purge Counter & Flag Files]                        [Mute Alert Spam]  [Send Email & Teams Alerts]
+                        │                                                   │                  │
+                        │                                                   │                  ▼
+                        │                                                   │                  [Generate .status Flag]
+                        │                                                   │                  │
+                        └───────────────────────────┬───────────────────────┴──────────────────┘
+                                                    ▼
+                                            [Process Finished]
+
+---
+
+---
+
+## 💻 Quick Start
+
+### Prerequisites
+* **Operating System**: Linux/Unix environment.
+* **Utilities**: `curl`, `mailx`, and standard POSIX command tools installed.
+* **Network Paths**: Outbound proxy configurations specified for corporate network webhooks (`http://proxy.abc.ei:8080`).
+
+### Configuration & Infrastructure Setup
+
+1. Map the expected folder layout inside the server hosting environment:
+   ```text
+   \$HOME/cxp_expnow_menu_jumpserver/webchecks/
+   ├── <appname-lowercase>/
+   │   └── prod/
+   │       ├── log/
+   │       └── temp/
+   └── urls/
+       ├── <appname-lowercase>-url.txt       <-- Add Line-separated standard URLs here
+       └── <appname-lowercase>-vip-url.txt   <-- Add Line-separated VIP URLs here
+   ```
+
+2. Open the script file and configure the target identity variables:
+   ```bash
+   APPNAME="YOUR_APP_CAPS"                  # e.g., "PLATFORMAPI"
+   APPNAME2="your_app_lowercase"            # e.g., "platformapi"
+   APP_SERVICE_ACCOUNT_USER="accounts"      # e.g., "gqlrouterint, kongint"
+   DEV_TEAM="Your-Dev-Team"                 # e.g., "Windsock"
+   WEBCHECK_PHRASE="primary_regex"          # e.g., "auth0.*Available"
+   WEBCHECK_PHRASE2="secondary_regex"       # e.g., "EXP NOW"
+   SEND_TO="team-inbox@yourdomain.com"      # Primary destination target
+   ```
+
+### Execution
+Provide executable access flags and launch the verification sequence manually or link it to a system-wide automated scheduling job (`cron`):
+
+```bash
+chmod +x webcheck_monitor.sh
+./webcheck_monitor.sh
+```
+
+---
+
+## 🔧 Technical Specification Notes
+
+* **Proxy Isolation Rules**: The script overrides environment variables locally inside the messaging logic to direct Microsoft Teams webhook connectivity packets through internal proxies while whitelisting target internal endpoints via `NO_PROXY=*.office.com`.
+* **String Normalization Execution**: Uses POSIX parameter expansions (`${server_name//[^a-zA-Z0-9]/_}`) to sanitize raw extracted domains dynamically. This formats your system variables safely for file creations on the disk substrate.
+
+---
+
+
+
 
