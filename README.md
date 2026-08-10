@@ -187,8 +187,6 @@ Does .status Flag Exist?                           Has Failure Limit Been Met? (
 
 ---
 
----
-
 ## 💻 Quick Start
 
 ### Prerequisites
@@ -235,6 +233,141 @@ chmod +x webcheck_monitor.sh
 
 * **Proxy Isolation Rules**: The script overrides environment variables locally inside the messaging logic to direct Microsoft Teams webhook connectivity packets through internal proxies while whitelisting target internal endpoints via `NO_PROXY=*.office.com`.
 * **String Normalization Execution**: Uses POSIX parameter expansions (`${server_name//[^a-zA-Z0-9]/_}`) to sanitize raw extracted domains dynamically. This formats your system variables safely for file creations on the disk substrate.
+
+## ⏰ Automation with Crontab
+
+To ensure continuous health monitoring, configure the script to run automatically every **5 minutes** using the Linux native cron daemon.
+
+### 1. Open the Crontab Editor
+Log into the execution server as the user that owns the script repository and open the cron configuration table:
+
+```bash
+crontab -e
+```
+
+### 2. Add the Cron Entry
+Scroll to the bottom of the file and paste the following line. 
+
+> ⚠️ **Important:** Make sure to replace `/path/to/your/script/` with the absolute path to your actual script file (e.g., `/home/serviceuser/scripts/webcheck_monitor.sh`).
+
+```cron
+*/5 * * * * /bin/bash /path/to/your/script/webcheck_monitor.sh > /dev/null 2>&1
+```
+
+### 3. Verify the Configuration
+Save and close the editor (if using `nano`, press `Ctrl+O`, `Enter`, then `Ctrl+X`). Verify that the cron job was successfully registered by listing your active cron entries:
+
+```bash
+crontab -l
+```
+
+---
+
+## 🔍 Automation Best Practices & Troubleshooting
+
+* **Absolute Paths Rule**: Crontab operates in a highly restricted shell environment and does not inherit your personal `.bashrc` profiles or custom environment variables. The script handles this internally for its temporary directories by using `$HOME`, but you must specify the **exact absolute path** to the script file itself in the crontab configuration line.
+* **Execution Permissions**: Ensure the script has proper executable permissions beforehand, otherwise crontab will fail to launch the process:
+  ```bash
+  chmod +x /path/to/your/script/webcheck_monitor.sh
+  ```
+* **Log Verification**: If you want to check if the cron job is actually firing, you can inspect your system's authorization logs:
+  ```bash
+  # For RHEL / CentOS / Rocky Linux:
+  tail -f /var/log/cron | grep webcheck_monitor.sh
+
+  # For Ubuntu / Debian systems:
+  tail -f /var/log/syslog | grep CRON
+  ```
+* **Output Redirection**: The `> /dev/null 2>&1` flag at the end of the cron entry safely silences standard output streams. This prevents your server's local root mail file from filling up with generic console log dumps every 5 minutes.
+
+---
+
+# Lightweight Disk Space Monitor
+
+A lightweight, single-purpose Bash script that proactively scans local disk partitions and alerts system administrators when storage usage breaches a designated percentage threshold. 
+
+## 📋 Features
+* **Explicit Column Filtering**: Locks output to specific parameters to completely avoid standard spacing errors caused by long mount point paths.
+* **Auto-Sanitization**: Strips trailing percentage signs dynamically on the fly.
+* **Color-Coded Feedback**: Outputs clean `CRITICAL` (red) or `OK` (green) terminal metrics for rapid scanning.
+* **Zero Dependencies**: Relies exclusively on standard POSIX commands (`df`, `grep`, `bash`).
+
+## ⚙️ Architecture Workflow
+
+```text
+[Start Script Sweep] ➔ Load URL Target Lists ➔ Execute curl HTTP & Body Checks
+│
+┌─────────────────────────┴────────────────────────┐
+▼                                                  ▼
+[Validation = OK]                                  [Validation = Failed]
+Does .status Flag Exist?                           Has Failure Limit Been Met? (3 Drops / 15 mins)
+│                       │                          │
+▼ (No)                  ▼ (Yes)                    ▼ (No)                   ▼ (Yes)
+[Process Finished]      [Send Recovery Email]      [Log Counter State]      Is State File Active?
+                        │                                                   │                  │
+                        ▼                                                   ▼ (Yes)            ▼ (No)
+                        [Purge Counter & Flag Files]                        [Mute Alert Spam]  [Send Email & Teams Alerts]
+                        │                                                   │                  │
+                        │                                                   │                  ▼
+                        │                                                   │                  [Generate .status Flag]
+                        │                                                   │                  │
+                        └───────────────────────────┬───────────────────────┴──────────────────┘
+                                                    ▼
+                                            [Process Finished]
+```
+
+## 🛠️ Configuration
+Open the script file and update the variables at the top of the script according to your infrastructure requirements:
+
+```bash
+# Target percentage threshold to trigger warning alerts (Integer value only)
+THRESHOLD=75
+```
+
+## 🚀 Usage Guide
+
+### 1. Download and Apply Permissions
+Clone or place the script on your host machine, then grant executable capabilities:
+```bash
+chmod +x disk_check.sh
+```
+
+### 2. Manual Execution
+Run the monitor instantly directly from your terminal console:
+```bash
+./disk_check.sh
+```
+
+### 3. Automated Scheduling (Cron)
+To continuously monitor production environments, automate the script check via system `crontab` utilities. 
+
+Open your cron configuration profile:
+```bash
+crontab -e
+```
+
+Add the following rule to execute the validation every hour on the hour, routing output logs to a centralized diagnostic track:
+```cron
+0 * * * * /path/to/disk_check.sh >> /var/log/disk_monitor.log 2>&1
+```
+
+## 🖥️ Sample Console Output
+
+**When threshold is breached:**
+```text
+Checking disk space on [prod-web-server-01] (Threshold: 75%)...
+--------------------------------------------------------
+CRITICAL: Partition '/' is at 84% capacity!
+--------------------------------------------------------
+```
+
+**When system is healthy:**
+```text
+Checking disk space on [prod-web-server-01] (Threshold: 75%)...
+--------------------------------------------------------
+OK: All scanned partitions are below 75% capacity.
+--------------------------------------------------------
+```
 
 ---
 
