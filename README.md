@@ -89,7 +89,7 @@ A production-grade Bash script designed to centrally monitor Apache (`httpd`) in
 
 ---
 
-## 📋 Operational Workflow
+## 📋 Architecture Workflow
 
 ```text
 [Start Engine] ➔ Reads Inventory List ➔ Iterates Hosts via SSH
@@ -163,27 +163,38 @@ A production-ready Bash monitoring script designed to perform multi-stage health
 
 ---
 
-## 📋 Operational Lifecycle Architecture
+## 📋 Architecture Workflow
 
-[Start Script Sweep] ➔ Load URL Target Lists ➔ Execute curl HTTP & Body Checks
-│
-┌─────────────────────────┴────────────────────────┐
-▼                                                  ▼
-[Validation = OK]                                  [Validation = Failed]
-Does .status Flag Exist?                           Has Failure Limit Been Met? (3 Drops / 15 mins)
-│                       │                          │
-▼ (No)                  ▼ (Yes)                    ▼ (No)                   ▼ (Yes)
-[Process Finished]      [Send Recovery Email]      [Log Counter State]      Is State File Active?
-                        │                                                   │                  │
-                        ▼                                                   ▼ (Yes)            ▼ (No)
-                        [Purge Counter & Flag Files]                        [Mute Alert Spam]  [Send Email & Teams Alerts]
-                        │                                                   │                  │
-                        │                                                   │                  ▼
-                        │                                                   │                  [Generate .status Flag]
-                        │                                                   │                  │
-                        └───────────────────────────┬───────────────────────┴──────────────────┘
-                                                    ▼
-                                            [Process Finished]
+```text
+[Start Script Sweep]
+         │
+         ▼
+[Load URL Target Lists]
+         │
+         ▼
+[Execute curl HTTP & Body Checks]
+         │
+ ┌───────┴───────┐
+ ▼               ▼
+[Validation OK] [Validation Failed]
+ │               │
+ │               ▼
+ │      [Has Failure Limit Been Met?] (3 Drops within 15 mins)
+ │       ├─── No  ──► [Log Counter State] ──► [Process Finished]
+ │       └─── Yes ──► [Is State File Active?]
+ │                     ├─── Yes ──► [Mute Alert Spam] ──► [Process Finished]
+ │                     └─── No  ──► [Send Email & Teams Alerts]
+ │                                   │
+ │                                   ▼
+ │                                  [Generate .status State Flag] ──► [Process Finished]
+ ▼
+[Does .status Flag Exist?]
+ ├─── No  ──► [Process Finished]
+ └─── Yes ──► [Send Recovery Email Notification]
+               │
+               ▼
+              [Purge Counter & .status Flag Files] ──► [Process Finished]
+```
 
 ---
 
