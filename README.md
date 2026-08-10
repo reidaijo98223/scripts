@@ -91,22 +91,24 @@ A production-grade Bash script designed to centrally monitor Apache (`httpd`) in
 
 ## 📋 Operational Workflow
 
+```text
 [Start Engine] ➔ Reads Inventory List ➔ Iterates Hosts via SSH
 │
 ┌─────────────────────────┴────────────────────────┐
-▼▼
-[SSH Status = 0][SSH Status = 255]
-Is Apache Active? (pgrep) Network/Auth Exception Triggered
-│││
-▼ (Yes) ▼ (No) ▼
-[Log OK][Queue Host for Restart][Log Connection Error]
-│[Skip Restart Workflow]
-▼
-[Execute Remote Restart]
-│
-▼
-[Format & Mail Summary Report]
-
+▼                                                  ▼
+[SSH Status = 0]                                   [SSH Status = 255]
+Is Apache Active? (pgrep)                          Network/Auth Exception Triggered
+│                       │                          │
+▼ (Yes)                 ▼ (No)                     ▼
+[Log OK]                [Queue Host for Restart]   [Log Connection Error]
+│                       │                          │
+│                       ▼                          ▼
+│                       [Execute Remote Restart]   [Skip Restart Workflow]
+│                       │                          │
+└───────────────────────┼──────────────────────────┘
+                        ▼
+          [Format & Mail Summary Report]
+```
 ---
 
 ## 💻 Quick Start
