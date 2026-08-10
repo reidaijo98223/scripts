@@ -1,4 +1,4 @@
-# scripts
+# SCRIPTS
 Compilation of Scripts throughout my Career
 
 ---
