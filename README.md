@@ -1,5 +1,5 @@
 # SCRIPTS
-Compilation of Scripts throughout my Career
+Collection of scripts throughout my technical career.
 
 ---
 
