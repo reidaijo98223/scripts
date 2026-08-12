@@ -544,6 +544,45 @@ sudo ./middleware_installer.py
 ```
 ---
 
+# 3rd Party Software Inventory Report Automation using PowerShell Scripting
 
+An automated PowerShell utility designed to extract, format, and securely distribute compliance reporting. This script automates data synchronization from the central Nexus repository to key stakeholder teams.
+
+## 🚀 Workflow Overview
+
+The script performs the following steps sequentially:
+1. **Secure Download:** Extracts the latest version of `3rdPtySoftwareInventoryReport.csv` over HTTPS from `://abc.com`.
+2. **Data Normalization:** Sanitizes data structures to ensure a strict, comma-delimited output configuration.
+3. **Document Engineering:** Utilizes Microsoft Word COM automation interfaces to:
+   * Generate a dynamic landscape document layout.
+   * Tighten margins to a strict **0.5-inch** width and length boundary to maximize spatial grid efficiency.
+   * Render data structures cleanly into standard tables formatted in **Calibri 8pt font**.
+4. **Distribution:** Connects directly via SMTP on **Port 25** to your enterprise Exchange architecture to attach and route the final output to designated operational points of contact.
+
+## 📋 Prerequisites
+
+To run this automation engine locally or inside a worker pool pipeline, the host system must meet the following constraints:
+* **Operating System:** Windows Environment with PowerShell 5.1+ or PowerShell Core (Windows compatibility layer).
+* **Software Footprint:** A localized physical installation of **Microsoft Word** (necessary to initialize underlying COM Interop runtimes).
+* **Network Topology:** Open internal egress firewalls mapped through **Port 25 (SMTP)** to reach your local Exchange Routing Server.
+
+## ⚙️ Configuration Variables
+
+Before deploying the utility, ensure the following embedded configurations match your environment:
+
+| Variable | Target Parameter Mapping |
+| :--- | :--- |
+| `$Url` | Repository artifact destination path (`https://://abc.com/...`) |
+| `$SmtpServer` | Enterprise Exchange Server hostname or IP address |
+| `$ToAddress` | Primary delivery recipient (`reino.garcia@abc.com`) |
+
+## 🛠️ Execution
+
+Execute the script safely from an administrative or user-scope terminal environment:
+
+```powershell
+.\Generate-InventoryReport.ps1
+```
+---
 
 
