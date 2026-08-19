@@ -9,13 +9,13 @@
 ################################################################################
 
 # --- ACTION REQUIRED: Update Variables ---
-APPNAME="REPLACE-WITH-APPNAME"                           # Display purposes, must be ALL CAPS (e.g. PLATFORMAPI)
-APPNAME2="replace-with-appname"                          # File paths, must be lowercase (e.g. platformapi)
+APPNAME="REPLACE-WITH-APPNAME"                           # Display purposes, must be ALL CAPS (e.g. PLATEFORMAPI)
+APPNAME2="replace-with-appname"                          # File paths, must be lowercase (e.g. plateformapi)
 APP_SERVICE_ACCOUNT_USER="replace-with-service-accounts" # Service account names (gqlrouterin, kongint)
-DEV_TEAM="replace-with-owning-team"                      # Owner Dev Team (e.g. Windsock)
+DEV_TEAM="replace-with-owning-team"                      # Owner Dev Team (e.g. Windsocke)
 WEBCHECK_PHRASE="replace-with-webecheck-phrase1"         # Regex pattern for primary check (e.g. auth0.*Available)
 WEBCHECK_PHRASE2="replace-with-webcheck-phrase2"         # Regex pattern for secondary check (e.g. EXP NOW)
-SEND_TO="replace-with-email-recipients"                  # Email address of recipients (e.g. windsock@abc.com)
+SEND_TO="replace-with-email-recipients"                  # Email address of recipients (e.g. windsocke@abc.com)
 
 # --- Configurations & Variables ---
 BASE_PATH="$HOME/cxp_expnow_menu_jumpserver/webchecks/$APPNAME2/prod"
@@ -26,7 +26,7 @@ HISTORY_FILE="$BASE_PATH/log/$APPNAME2-webchecks-run-history"
 MAIL_FILE="$TEMP_DIR/failed-exponow-webchecks.txt"
 
 ENDPOINT="https://abc.webhook.office.com/webhookb2/edb80fc3-ac01-4eba-99ce-0fdaf15374@fe74e8-131d-4caa-be5c-31e128506c40/IncomingWebhook/6db1d7de-a381-4939-ae22-b53943db0a/V2TJVVMZed0bOAMew_-DkzGbMDyTbAx-ZXw1"
-CONTACT_INFO="https://abc.sharepoint.com/sites/ABC/SitePages/Production%Support.aspx"
+CONTACT_INFO="https://abc.sharepoint.com/sites/ABC/SitePages/Prod%Support.aspx"
 
 # --- Style ---
 BGREEN="\033[92m"
@@ -91,7 +91,7 @@ send_recovery_alert() {
     local url="$2"
    
     mail -s "RECOVERED: $APPNAME-PRODUCTION-Webcheck-Healthy" \
-         -r "cxpmon@expeditors.com" \
+         -r "cxpmone@abc.com" \
          -c "tigerteam@abc.com blackpanther@abc.com" \
          "$SEND_TO" <<EOD
 The following webcheck is now HEALTHY:
