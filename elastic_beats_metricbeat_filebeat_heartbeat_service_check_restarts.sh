@@ -5,14 +5,14 @@
 ##################################################################################
 
 # --- Configuration & Variables ---
-BASE_DIR="$HOME/cxp_exponow_menu_jumpserver/servicechecks/beats/prod"
+BASE_DIR="$HOME/cxp_expnw_menu_jumpserver/servicechecks/beats/prod"
 INV_DIR="$BASE_DIR/inventory"
 TEMP_DIR="$BASE_DIR/temp"
 HISTORY_FILE="$BASE_DIR/log/beats-prod-servicechecks-run-history"
 
 # --- Inputs/Outputs ---
 server_list="$INV_DIR/prod-server-list.txt"
-mail_report="$TEMP_DIR/failed-exponow-prod-beats-report.txt"
+mail_report="$TEMP_DIR/failed-expnw-prod-beats-report.txt"
 
 # --- Style ---
 BGREEN='\e[92m'
@@ -47,10 +47,10 @@ for server in $(<"$server_list"); do
     echo "----------------------------------------"
 
     # Single SSH call to query all 3 processes simultaneously to minimize connection overhead
-    remote_pids=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=3 -o LogLevel=error "chq-reinogar@$server" \
-        "pgrep -f /prod/app/metricbeat -o || echo 'mb_down'; \
-         pgrep -f /prod/app/filebeat -o || echo 'fb_down'; \
-         pgrep -f /prod/app/heartbeat -o || echo 'hb_down'")
+    remote_pids=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=3 -o LogLevel=error "lyn-reinogar@$server" \
+        "pgrep -f /prod/apps/metricbeat -o || echo 'mb_down'; \
+         pgrep -f /prod/apps/filebeat -o || echo 'fb_down'; \
+         pgrep -f /prod/apps/heartbeat -o || echo 'hb_down'")
     
     ssh_status=$?
 
@@ -101,7 +101,7 @@ if [ ${#mb_failed[@]} -gt 0 ]; then
     echo -e "\n${BGREEN}Restarting Metricbeat on failed servers...${NC}\n"
     for target in "${mb_failed[@]}"; do
         new_pid=$(ssh -o StrictHostKeyChecking=no -o LogLevel=error -o ConnectTimeout=3 "chq-reinogar@$target" \
-            "sudo -iu metricbeat /prod/app/metricbeat/start.sh > /dev/null 2>&1; pgrep -f /prod/app/metricbeat -o")
+            "sudo -iu metricbeat /prod/apps/metricbeat/start.sh > /dev/null 2>&1; pgrep -f /prod/apps/metricbeat -o")
         if [ -n "$new_pid" ]; then
             echo "Metricbeat was restarted on $target (PID=$new_pid)" >> "$mail_report"
             echo "Metricbeat restarted on $target"
@@ -113,8 +113,8 @@ fi
 if [ ${#fb_failed[@]} -gt 0 ]; then
     echo -e "\n${BGREEN}Restarting Filebeat on failed servers...${NC}\n"
     for target in "${fb_failed[@]}"; do
-        new_pid=$(ssh -o StrictHostKeyChecking=no -o LogLevel=error -o ConnectTimeout=3 "chq-reinogar@$target" \
-            "sudo -iu filebeat /prod/app/filebeat/start.sh > /dev/null 2>&1; pgrep -f /prod/app/filebeat -o")
+        new_pid=$(ssh -o StrictHostKeyChecking=no -o LogLevel=error -o ConnectTimeout=3 "lyn-reinogar@$target" \
+            "sudo -iu filebeat /prod/apps/filebeat/start.sh > /dev/null 2>&1; pgrep -f /prod/apps/filebeat -o")
         if [ -n "$new_pid" ]; then
             echo "Filebeat was restarted on $target (PID=$new_pid)" >> "$mail_report"
             echo "Filebeat restarted on $target"
@@ -127,7 +127,7 @@ if [ ${#hb_failed[@]} -gt 0 ]; then
     echo -e "\n${BGREEN}Restarting Heartbeat on failed servers...${NC}\n"
     for target in "${hb_failed[@]}"; do
         new_pid=$(ssh -o StrictHostKeyChecking=no -o LogLevel=error -o ConnectTimeout=3 "chq-reinogar@$target" \
-            "sudo -iu heartbeat /prod/app/heartbeat/start.sh > /dev/null 2>&1; pgrep -f /prod/app/heartbeat -o")
+            "sudo -iu heartbeat /prod/apps/heartbeat/start.sh > /dev/null 2>&1; pgrep -f /prod/apps/heartbeat -o")
         if [ -n "$new_pid" ]; then
             echo "Heartbeat was restarted on $target (PID=$new_pid)" >> "$mail_report"
             echo "Heartbeat restarted on $target"
