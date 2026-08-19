@@ -7,14 +7,14 @@
 ########################################################
  
 # --- Configurations & Variables ---
-BASE_DIR="$HOME/cxp_exponow_menu_jumpserver/servicechecks/apache-httpd/prod"
+BASE_DIR="$HOME/cxp_expnw_menu_jumpserver/servicechecks/apache-httpd/prod"
 INV_DIR="$BASE_DIR/inventory"
 TEMP_DIR="$BASE_DIR/temp"
 HISTORY_FILE="$BASE_DIR/log/apache-httpd-prod-servicechecks-run-history"
 
 # --- Inputs/Outputs ---
 ap_server_list="$INV_DIR/prod-server-list.txt"
-mail_report="$TEMP_DIR/failed-exponow-prod-apache-httpd-report.txt"
+mail_report="$TEMP_DIR/failed-expnw-prod-apache-httpd-report.txt"
 
 # --- Style ---
 BGREEN='\e[92m'
