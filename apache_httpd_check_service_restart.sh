@@ -89,7 +89,7 @@ sed -e 's/^/\r/' -e '/^[[:space:]]*$/d' "$mail_report"
 mail -s "APACHE-HTTPD-SERVICES-DOWN-BUT-RESTARTED" \
      -a "$mail_report" \
      -r "servicemon@abc.com" \
-     "tigerteam@abc.com blackpanther@abc.com" <<EOD
+     "reino.garcia@gmail.com" <<EOD
 
 Attached is a list of PROD APACHE (HTTPD) Services that were DOWN but RESTARTED!
 *************************************************************************
