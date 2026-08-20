@@ -11,7 +11,7 @@
 # --- ACTION REQUIRED: Update Variables ---
 APPNAME="REPLACE-WITH-APPNAME"                           # Display purposes, must be ALL CAPS (e.g. PLATEFORMAPI)
 APPNAME2="replace-with-appname"                          # File paths, must be lowercase (e.g. plateformapi)
-APP_SERVICE_ACCOUNT_USER="replace-with-service-accounts" # Service account names (gqlrouterin, kongint)
+APP_SERVICE_ACCOUNT_USER="replace-with-service-accounts" # Service account names (gqlrterint, kongint)
 DEV_TEAM="replace-with-owning-team"                      # Owner Dev Team (e.g. Windsocke)
 WEBCHECK_PHRASE="replace-with-webecheck-phrase1"         # Regex pattern for primary check (e.g. auth0.*Available)
 WEBCHECK_PHRASE2="replace-with-webcheck-phrase2"         # Regex pattern for secondary check (e.g. EXP NOW)
@@ -52,7 +52,7 @@ send_alerts() {
     # Send Email Alert
     mail -s "Failed-EXPONOW-PRODUCTION-Webchecks-$APPNAME" \
          -r "servicemon@abc.com" \
-         -c "tigerteam@abc.com blackpanther@abc.com" \
+         -c "reino.garcia@gmail.com" \
          "$SEND_TO" <<EOD
 List of $APPNAME Webchecks that are Down! (3 hits in the last 15 minutes)!!!
 ************************************************
@@ -92,7 +92,7 @@ send_recovery_alert() {
    
     mail -s "RECOVERED: $APPNAME-PRODUCTION-Webcheck-Healthy" \
          -r "cxpmone@abc.com" \
-         -c "tigerteam@abc.com blackpanther@abc.com" \
+         -c "reino.garcia@gmail.com" \
          "$SEND_TO" <<EOD
 The following webcheck is now HEALTHY:
 ************************************************
