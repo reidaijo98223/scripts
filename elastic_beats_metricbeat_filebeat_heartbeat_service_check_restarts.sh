@@ -100,7 +100,7 @@ fi
 if [ ${#mb_failed[@]} -gt 0 ]; then
     echo -e "\n${BGREEN}Restarting Metricbeat on failed servers...${NC}\n"
     for target in "${mb_failed[@]}"; do
-        new_pid=$(ssh -o StrictHostKeyChecking=no -o LogLevel=error -o ConnectTimeout=3 "chq-reinogar@$target" \
+        new_pid=$(ssh -o StrictHostKeyChecking=no -o LogLevel=error -o ConnectTimeout=3 "lyn-reinogar@$target" \
             "sudo -iu metricbeat /prod/apps/metricbeat/start.sh > /dev/null 2>&1; pgrep -f /prod/apps/metricbeat -o")
         if [ -n "$new_pid" ]; then
             echo "Metricbeat was restarted on $target (PID=$new_pid)" >> "$mail_report"
@@ -126,7 +126,7 @@ fi
 if [ ${#hb_failed[@]} -gt 0 ]; then
     echo -e "\n${BGREEN}Restarting Heartbeat on failed servers...${NC}\n"
     for target in "${hb_failed[@]}"; do
-        new_pid=$(ssh -o StrictHostKeyChecking=no -o LogLevel=error -o ConnectTimeout=3 "chq-reinogar@$target" \
+        new_pid=$(ssh -o StrictHostKeyChecking=no -o LogLevel=error -o ConnectTimeout=3 "lyn-reinogar@$target" \
             "sudo -iu heartbeat /prod/apps/heartbeat/start.sh > /dev/null 2>&1; pgrep -f /prod/apps/heartbeat -o")
         if [ -n "$new_pid" ]; then
             echo "Heartbeat was restarted on $target (PID=$new_pid)" >> "$mail_report"
@@ -141,8 +141,8 @@ sed -i -e 's/^/\r/' -e '/^[[:space:]]*$/d' "$mail_report"
 # --- Email Notification ---
 mail -s "ELASTIC-BEATS-SERVICES-DOWN-BUT-RESTARTED" \
      -a "$mail_report" \
-     -r "cxpmon@expeditors.com" \
-     "tigerteam@abc.com blackpanther@abc.com" <<EOD
+     -r "cxpmonitor@abc.com" \
+     "reino.garcia@gmail.com" <<EOD
 
 Attached is a list of PROD Elastic Beats Services (Metricbeat/Filebeat/Heartbeat) that were DOWN but RESTARTED!
 
