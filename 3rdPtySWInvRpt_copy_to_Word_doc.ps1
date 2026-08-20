@@ -8,8 +8,8 @@ $LocalDocxPath = "$env:lyn-reinogar\Desktop\3rdPtySoftwareInventoryReport.docx"
 # Email Configuration
 $SmtpServer = "exch-smtp.abc.com"
 $SmtpPort = 25 
-$ToAddress = "reino.garcia@abc.com"
-$FromAddress = "reino.garcia@abc.com" #
+$ToAddress = "reino.garcia@gmail.com"
+$FromAddress = "reino.garcia@gmail.com" #
 $Subject = "Third Party Software Inventory Report"
 $Body = "Hi Reino,`n`nPlease find attached the formatted Software Inventory Report."
 
